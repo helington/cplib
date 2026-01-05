@@ -1,6 +1,7 @@
 // Standard BFS
 
 // Computes the shortest distance from vertex 'b' to all other vertices.
+// If dist[i] == -1, vertex 'i' is UNREACHABLE from 'b'.
 
 // O(n + m)
 
@@ -30,6 +31,7 @@ vector<int> bfs(const vector<vector<int>> &adj, int b) {
 // Grid BFS
 
 // Computes shortest distance from cell "b" to all others.
+// If dist[i][j] == -1, the cell (i,j) is UNREACHABLE from the start.
 
 // O(n * m)
 
