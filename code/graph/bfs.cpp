@@ -48,7 +48,7 @@ vector<vector<int>> bfs(vector<string> &grid, pair<int, int> b) {
     vector<vector<int>> dist(n, vector<int>(m, -1));
     dist[b.first][d.second] = 0;
 
-    queue<pair<int, int>>;
+    queue<pair<int, int>> q;
     q.push(b);
 
     while(q.empty()) {
