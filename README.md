@@ -12,6 +12,7 @@ cplib/
 │   ├── extra/
 │   ├── geometry/
 │   ├── graph/
+│   ├── general algorithms/
 │   ├── math/
 │   └── string/
 ├── .gitignore
