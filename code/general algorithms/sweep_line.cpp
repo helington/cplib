@@ -1,37 +1,50 @@
-// 1D Sweep Line
+// 1D Sweep Line (Difference Array + Coord Comp)
 
-// Processes events on a timeline.
-// Time Complexity: O(N log N) (due to sorting)
+// Processes interval events on a timeline.
+// Extremely useful when coordinate ranges are large (10^9) 
+// but the number of intervals is small (10^5).
 
-struct Event {
-    int time;
-    int type; // +1 for Start, -1 for End
-    
-    // Sort by time. 
-    // If times are equal, process START (+1) before END (-1) to include boundaries.
-    // If [L, R] is inclusive, end event should often be at R + 1.
-    bool operator<(const Event& other) const {
-        if (time != other.time) return time < other.time;
-        return type > other.type; // Process +1 before -1
+// Time Complexity: O(N log N) (due to sorting and lower_bound)
+// Space Complexity: O(N)
+
+void sweep_line(const vector<pair<int, int>> &intervals) {
+    vector<int> all;
+
+    // Collect all interesting points
+    for (const auto &[l, r] : intervals) {
+        all.push_back(l);
+        all.push_back(r); 
+        // NOTE: If intervals are [L, R] INCLUSIVE, push back 'r + 1' instead of 'r'
+        // all.push_back(r + 1);
     }
-};
 
-int max_overlap(const vector<pair<int, int>>& intervals) {
-    vector<Event> events;
-    for (auto p : intervals) {
-        events.push_back({p.first, 1});
-        events.push_back({p.second, -1}); // Assumes interval is [L, R)
-        // If interval is [L, R] inclusive, use: events.push_back({p.second + 1, -1});
+    // Coordinate Compression
+    sort(all.begin(), all.end());
+    all.erase(unique(all.begin(), all.end()), all.end());
+
+    // Difference Array
+    int m = all.size();
+    vector<int> cnt(m, 0);
+
+    for (const auto &[l, r] : intervals) {
+        // Map original coordinates to compressed indices [0 ... m-1]
+        int idx_l = lower_bound(all.begin(), all.end(), l) - all.begin();
+        int idx_r = lower_bound(all.begin(), all.end(), r) - all.begin();
+
+        cnt[idx_l]++;
+        cnt[idx_r]--; 
+        // NOTE: If [L, R] INCLUSIVE, find the index for 'r + 1' and decrement that:
+        // int idx_r_plus_1 = lower_bound(all.begin(), all.end(), r + 1) - all.begin();
+        // cnt[idx_r_plus_1]--;
     }
-    sort(events.begin(), events.end());
 
-    // Prefix sum idea
+    // Prefix Sums to compute active intervals
     int max_active = 0;
     int current_active = 0;
-
-    for (auto e : events) {
-        current_active += e.type;
+    
+    // pref[i] represents how many intervals cover the compressed segment 'i'
+    for (int i = 0; i < m; i++) {
+        current_active += cnt[i];
         max_active = max(max_active, current_active);
     }
-    return max_active;
 }
