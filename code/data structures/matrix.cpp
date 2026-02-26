@@ -1,3 +1,7 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
 // Matrix Structure
 
 // A reusable structure for Matrix operations.
@@ -6,7 +10,8 @@
 // - Multiplication: O(n³)
 // - Exponentiation: O(n³ log(k))
 
-template<typename T> struct Matrix : vector<vector<T>> {
+template<typename T>
+struct Matrix : vector<vector<T>> {
     int n, m;
 
     Matrix(int n_, int m_, bool ident = false) :
@@ -19,7 +24,7 @@ template<typename T> struct Matrix : vector<vector<T>> {
     Matrix(const vector<vector<T>> &c) :
         vector<vector<T>>(c), n(c.size()), m(c[0].size()) {}
 
-    Matrix<T> operator *(const Matrix<T> &r) {
+    Matrix<T> operator * (const Matrix<T> &r) {
         Matrix<T> res(n, r.m);
 
         for (int i = 0; i < n; i++) {
@@ -38,7 +43,7 @@ template<typename T> struct Matrix : vector<vector<T>> {
         return res;
     }
 
-    Matrix<T> operator ^(ll e) {
+    Matrix<T> fexp(T e) {
         Matrix<T> res(n, n, true), base = *this;
 
         while(e) {
@@ -50,10 +55,12 @@ template<typename T> struct Matrix : vector<vector<T>> {
         return res;
     }
 
-    void print() {
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) cout << (*this)[i][j] << " ";
-            cout << endl;
+    friend ostream &operator << (ostream &os, const Matrix<T> &mat) {
+        for (int i = 0; i < mat.n; i++) {
+            for (int j = 0; j < mat.m; j++) os << mat[i][j] << " ";
+            os << endl;
         }
+
+        return os;
     }
-}
+};
