@@ -16,7 +16,7 @@ struct MinQueue : deque<pair<T, int>> {
 
     void push(int x) {
         int cnt = 1;
-        while (!this->empty() and x <= this->front().first) {
+        while (!this->empty() and x <= this->back().first) {
             cnt += this->back().second;
             this->pop_back();
         }
