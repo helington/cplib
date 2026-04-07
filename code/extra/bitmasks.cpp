@@ -2,7 +2,7 @@
 
 void bit_tricks(int x, int n) {
     // 1. Check if k-th bit is set
-    bool is_set = (x & (1 << n));
+    bool is_set = ((n >> x) & 1);
 
     // 2. Set k-th bit (Turn ON)
     x |= (1 << n);
