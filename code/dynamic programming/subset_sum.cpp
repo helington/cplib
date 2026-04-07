@@ -22,3 +22,25 @@ bool can_reach_sum(const vector<int>& nums, int target) {
 
     return dp[target];
 }
+
+// Adaptated ideia, if can i get a subsequence that it's disible by a lcm
+
+ll total_ways(vector<ll> &a) {
+    vector<ll> dp(LCM, 0);
+    vector<ll> dp_increment(LCM);
+
+    for (auto i : a) {
+        dp_increment = dp;
+
+        dp_increment[i % LCM]++;
+        for (int j = 0; j < LCM; j++) {
+            if (!dp[j]) continue;
+            auto key = mod_mul(i, j);
+            dp_increment[key] = mod_add(dp_increment[key], dp[j]);
+        }
+
+        dp = dp_increment;
+    }
+
+    return dp[0];
+}

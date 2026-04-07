@@ -7,9 +7,29 @@
 // Constraint: N <= 20
 
 const int INF = 1e9;
+int n;
 
+// tsp recursivo
+int tsp(
+    vector<vector<int>> &dp, vector<vector<int>> &dist,
+    int u, int mask=0
+    ) {
+    if (mask == (1<<n) - 1) return 0;
+
+    int &ans = dp[u][mask];
+    if (~ans) return ans;
+
+    ans = INF;
+    for (int v = 0; v < n; v++) {
+        if (mask & (1<<v)) continue;
+        ans = min(ans, dist[u][v] + tsp(dp, dist, v, mask | (1<<v)));
+    }
+
+    return ans;
+}
+
+// tsp iterativo
 int tsp(const vector<vector<int>>& dist) {
-    int n = dist.size();
     int LIMIT = (1 << n);
 
     // dp[mask][i] = min cost to visit set 'mask', ending at city 'i'
