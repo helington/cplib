@@ -1,86 +1,83 @@
-#include <vector>
-#include <string>
-#include <cstring>
-
+#include <bits/stdc++.h>
 using namespace std;
+#define ll long long
+#define endl '\n'
 
-// ==========================================
 // Trie (Prefix Tree)
-// ==========================================
-// - Insert: O(L * Alpha) where L is string length
-// - Search: O(L)
-// - Remove: O(L)
+
+// A tree data structure used for efficiently storing and retrieving strings.
+// Supports counting prefixes, exact matches, and erasing strings.
+
+// 0-indexed internally for nodes (root is 0).
+// Time Complexity: O(L) for Insert, Search, and Erase (where L is string length).
+// Space Complexity: O(N * ALPHA) where N is the total length of all strings.
+
+const int ALPHA = 26;
+const char NORM = 'a';
 
 struct Node {
-    vector<int> nxt;
-    int cnt_pref;
-    int cnt_end; 
+    int nxt[ALPHA];
+    int pref, end;
 
-    Node(int alpha = 26) : nxt(alpha, 0), cnt_pref(0), cnt_end(0) {}
+    Node() : pref(0), end(0) { memset(nxt, 0, sizeof(nxt)); }
 };
 
 struct Trie {
-    vector<Node> tr;
-    const char NORM = 'a';
+    vector<Node> nodes;
 
-    Trie() {
-        tr.emplace_back(); // Root node at index 0
-    }
+    Trie() { nodes.emplace_back(); }
 
-    void insert(const string &s) {
+    void insert(string &s) {
         int curr = 0;
-        tr[curr].cnt_pref++; // Update root prefix count
+        nodes[curr].pref++;
 
-        for (char c : s) {
+        for (char &c : s) {
             int idx = c - NORM;
             
-            if (!tr[curr].nxt[idx]) {
-                tr[curr].nxt[idx] = (int)tr.size();
-                tr.emplace_back();
+            if (!nodes[curr].nxt[idx]) {
+                nodes[curr].nxt[idx] = (int)nodes.size();
+                nodes.emplace_back();
             }
             
-            curr = tr[curr].nxt[idx];
-            tr[curr].cnt_pref++;
+            curr = nodes[curr].nxt[idx];
+            nodes[curr].pref++;
         }
         
-        tr[curr].cnt_end++;
+        nodes[curr].end++;
     }
 
-    // Counts words exactly equal to s
-    int count_exact(const string &s) {
-        int idx = find_node(s);
-        return idx != -1 ? tr[idx].cnt_end : 0;
-    }
-
-    // Counts words that have s as a prefix
-    int count_prefix(const string &s) {
-        int idx = find_node(s);
-        return idx != -1 ? tr[idx].cnt_pref : 0;
-    }
-
-    // Doesn't actually delete nodes to keep indices valid.
-    void remove(const string &s) {
-        if (count_exact(s) == 0) return;
-
+    int find(string &s) {
         int curr = 0;
-        tr[curr].cnt_pref--;
-        
-        for (char c : s) {
+        for (char &c : s) {
             int idx = c - NORM;
-            curr = tr[curr].nxt[idx];
-            tr[curr].cnt_pref--;
-        }
-        
-        tr[curr].cnt_end--;
-    }
-
-    int find_node(const string &s) {
-        int curr = 0;
-        for (char c : s) {
-            int idx = c - NORM;
-            if (!tr[curr].nxt[idx]) return -1;
-            curr = tr[curr].nxt[idx];
+            if (!nodes[curr].nxt[idx]) return -1;
+            curr = nodes[curr].nxt[idx];
         }
         return curr;
+    }
+
+    int count_end(string &s) {
+        int idx = find(s);
+        return idx != -1 ? nodes[idx].end : 0;
+    }
+
+    int count_pref(string &s) {
+        int idx = find(s);
+        return idx != -1 ? nodes[idx].pref : 0;
+    }
+
+    void erase(string &s) {
+        if (count_end(s) == 0) return; // Só remove se realmente existir
+
+        int curr = 0;
+        nodes[curr].pref--;
+        
+        for (char &c : s) {
+            int idx = c - NORM;
+            curr = nodes[curr].nxt[idx];
+            nodes[curr].pref--;
+        }
+        
+        nodes[curr].end--;
     }
 };
