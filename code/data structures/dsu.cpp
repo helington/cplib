@@ -1,31 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define endl '\n'
+
 // Disjoint Set Union (DSU)
 
 // Supports finding the representative of a set and merging two sets.
 
-// O(alpha(n)) ~ O(1) amortized
+// Time Complexity: O(alpha(N).
+// Space Complexity: O(N)
 
 struct DSU {
-    vector<int> parent, sz;
+    vector<int> id, sz;
 
-    DSU(int n) : parent(n), sz(n, 1) {
-        iota(parent.begin(), parent.end(), 0);
-    }
+    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
 
-    int find(int u) {
-        if (u == parent[u]) return u;
-        return parent[u] = find(parent[u]);
-    }
+    int find(int u) { return id[u] = (u == id[u] ? u : find(id[u])); }
 
     bool unite(int u, int v) {
-        u = find(u);
-        v = find(v);
-
+        u = find(u), v = find(v);
         if (u == v) return false;
-
         if (sz[u] < sz[v]) swap(u, v);
-
-        sz[u] += sz[v];
-        parent[v] = u;
+        sz[u] += sz[v], id[v] = u;
         return true;
     }
+
+    int size(int u) { return sz[find(u)]; }
+    bool same(int u, int v) { return find(u) == find(v); }
 };
